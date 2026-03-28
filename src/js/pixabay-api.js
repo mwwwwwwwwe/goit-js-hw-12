@@ -1,23 +1,24 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = 'https://pixabay.com';
+const PIXABAY_API_URL = 'https://pixabay.com/api/';
+const PIXABAY_API_KEY = '55214296-bcb2f99248005430efd53daac';
+const itemsPerPage = 15;
 
-export async function getImagesByQuery(query, page) {
-  try {
-    const response = await axios.get('/api/', {
-      params: {
-        key: '55214296-bcb2f99248005430efd53daac',
-        q: query,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: true,
-        page: page,
-        per_page: 15, 
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching images:', error);
-    throw error;
-  }
+export let totalPages = 0;
+
+export async function getImagesByQuery(query, currentPage) {
+  const result = await axios.get(PIXABAY_API_URL, {
+    params: {
+      key: PIXABAY_API_KEY,
+      q: query,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: true,
+      page: currentPage,
+      per_page: itemsPerPage,
+    },
+  });
+  const totalHits = result.data.totalHits;
+  totalPages = Math.ceil(totalHits / itemsPerPage);
+  return result.data;
 }
