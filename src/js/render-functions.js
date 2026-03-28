@@ -1,40 +1,54 @@
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const gallery = document.querySelector(".gallery");
-const loader = document.querySelector(".loader");
-const lightbox = new SimpleLightbox(".gallery a", {
-  captionsData: "alt",
+const gallery = document.querySelector('.gallery');
+const loadMoreBtn = document.querySelector('.load-more');
+const loader = document.querySelector('.loader');
+
+// Инициализация лайтбокса
+export const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
   captionDelay: 250,
 });
 
-function itemTemplate(image) {
-return `<li class="gallery-item">
-      <a href="${image.largeImageURL}">
-        <img src="${image.webformatURL}" alt="${image.tags}">
-      </a>
-      <ul class="stats">
-        <li class="stats-item"><p class="stat-title">likes</p><p class="stat-value">${image.likes}</p></li>
-        <li class="stats-item"><p class="stat-title">views</p><p class="stat-value">${image.views}</p></li>
-        <li class="stats-item"><p class="stat-title">comments</p><p class="stat-value">${image.comments}</p></li>
-        <li class="stats-item"><p class="stat-title">downloads</p><p class="stat-value">${image.downloads}</p></li>
-      </ul>
-    </li>`;
+export function createGallery(images) {
+  const markup = images
+    .map(
+      ({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `
+        <a class="photo-card" href="${largeImageURL}">
+          <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+          <div class="photo-info">
+            <p><span>Likes:</span> ${likes}</p>
+            <p><span>Views:</span> ${views}</p>
+            <p><span>Comments:</span> ${comments}</p>
+            <p><span>Downloads:</span> ${downloads}</p>
+          </div>
+        </a>
+      `
+    )
+    .join('');
+
+  gallery.insertAdjacentHTML('beforeend', markup);
+  lightbox.refresh(); // обязательно!
 }
 
 export function clearGallery() {
-    gallery.innerHTML = "";
+  gallery.innerHTML = '';
 }
 
 export function showLoader() {
-    loader.style.display = 'block';
+  loader?.classList.remove('is-hidden');
 }
 
 export function hideLoader() {
-    loader.style.display = 'none';
+  loader?.classList.add('is-hidden');
 }
 
-export function createGallery(items) {
-  gallery.insertAdjacentHTML("beforeend", items.map(itemTemplate).join(''));
-  lightbox.refresh();
+export function showLoadMoreButton() {
+  loadMoreBtn?.classList.remove('is-hidden');
 }
+
+export function hideLoadMoreButton() {
+  loadMoreBtn?.classList.add('is-hidden');
+}
+

@@ -2,22 +2,22 @@ import axios from 'axios';
 
 axios.defaults.baseURL = 'https://pixabay.com';
 
-export function getImagesByQuery(query) {
-  return axios
-    .get('/api/', {
+export async function getImagesByQuery(query, page) {
+  try {
+    const response = await axios.get('/api/', {
       params: {
         key: '55214296-bcb2f99248005430efd53daac',
-        q: `${query}`,
+        q: query,
         image_type: 'photo',
         orientation: 'horizontal',
-        safesearch: 'true',
+        safesearch: true,
+        page: page,
+        per_page: 15, 
       },
-    })
-    .then(response => {
-      return response.data.hits;
-    })
-    .catch(error => {
-      console.log(error);
     });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching images:', error);
+    throw error;
+  }
 }
-
